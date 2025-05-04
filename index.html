@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Password Generator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #003300;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: #004d00;
+      padding: 2rem;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00cc00;
+      width: 90%;
+      max-width: 400px;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    label, select, button, input {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #009900;
+      color: white;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #007700;
+    }
+    #password-output {
+      word-break: break-word;
+      font-weight: bold;
+      text-align: center;
+    }
+    #copy-btn {
+      margin-top: -0.5rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: #00cc00;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <main class="container" role="main">
+    <h1 id="app-title">Quick Password Generator</h1>
+
+    <label for="length-select">Select Password Length:</label>
+    <select id="length-select" aria-labelledby="Select password length">
+      <option value="8">8 Characters</option>
+      <option value="16">16 Characters</option>
+      <option value="32">32 Characters</option>
+      <option value="64">64 Characters</option>
+    </select>
+
+    <label for="custom-length">Or enter custom length:</label>
+    <input type="number" id="custom-length" min="4" max="128" placeholder="Enter length (e.g., 20)" aria-label="Custom password length" />
+
+    <button id="generate-btn" aria-label="Generate password">Generate Password</button>
+
+    <label for="password-output">Generated Password:</label>
+    <input type="text" id="password-output" readonly aria-readonly="true" aria-label="Generated password" />
+
+    <button id="copy-btn" aria-label="Copy password to clipboard">Copy to Clipboard</button>
+  </main>
+
+  <footer>
+    Developed by: <a href="https://www.linkedin.com/in/itsmdmunna/" target="_blank" rel="noopener">Md Munna</a>
+  </footer>
+
+  <script>
+    const generateBtn = document.getElementById('generate-btn');
+    const passwordOutput = document.getElementById('password-output');
+    const lengthSelect = document.getElementById('length-select');
+    const customLengthInput = document.getElementById('custom-length');
+    const copyBtn = document.getElementById('copy-btn');
+
+    const upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowerCaseChars = 'abcdefghijklmnopqrstuvwxyz';
+    const digits = '0123456789';
+    const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    function generatePassword(length) {
+      const allChars = upperCaseChars + lowerCaseChars + digits + specialChars;
+      let password = '';
+
+      // Ensure at least one character from each category
+      password += upperCaseChars[Math.floor(Math.random() * upperCaseChars.length)];
+      password += lowerCaseChars[Math.floor(Math.random() * lowerCaseChars.length)];
+      password += digits[Math.floor(Math.random() * digits.length)];
+      password += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+      for (let i = 4; i < length; i++) {
+        password += allChars[Math.floor(Math.random() * allChars.length)];
+      }
+
+      return password.split('').sort(() => Math.random() - 0.5).join('');
+    }
+
+    generateBtn.addEventListener('click', () => {
+      let length = parseInt(lengthSelect.value);
+      const customLength = parseInt(customLengthInput.value);
+      if (!isNaN(customLength) && customLength >= 4 && customLength <= 128) {
+        length = customLength;
+      }
+      const password = generatePassword(length);
+      passwordOutput.value = password;
+    });
+
+    copyBtn.addEventListener('click', () => {
+      passwordOutput.select();
+      document.execCommand('copy');
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => copyBtn.textContent = 'Copy to Clipboard', 2000);
+    });
+  </script>
+</body>
+</html>
